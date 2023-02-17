@@ -26,7 +26,7 @@ export default class FileUploadValidator {
   public schema = schema.create({
     caption:schema.string(),
     image:schema.file({
-      extnames:['png', 'jpeg']
+      extnames:['png', 'jpg']
     })
   })
 
