@@ -6,29 +6,27 @@ import OptionalValidator from 'App/Validators/OptionalValidator'
 
 export default class PostsController {
   public async displayAll({ response }: HttpContextContract) {
-   const data = await Post.all()
-   response.send({data:data, success:true})
+    const data = await Post.all()
+    response.send({ data: data, success: true })
   }
 
   public async displayOne({ response, params }: HttpContextContract) {
     const data = await Post.findOrFail(params.id)
-   response.send(data)
+    response.send(data)
   }
 
   public async upload({ response, request }: HttpContextContract) {
-    const image=request.file('image')
-    console.log('image:', typeof image);
-    
+    // const image = request.file('image')
+    // console.log('image:', typeof image)
     const payload = await request.validate(FileUploadValidator)
-    if (payload.image.extname) {
-      const image = new Date().getTime().toString() + `.${payload.image.extname}`
-      // console.log(image)
-      await payload.image.move(Application.tmpPath('uploads'), {
-        name: image,
-      })
-      await Post.create({ image: image, caption: payload.caption })
-      return response.send({ message: 'Inserted Successfully', success: true })
-    } else return response.send('fail')
+
+    const image = new Date().getTime().toString() + `.${payload.image.extname}`
+    // console.log(image)
+    await payload.image.move(Application.tmpPath('uploads'), {
+      name: image,
+    })
+    await Post.create({ image: image, caption: payload.caption })
+    return response.send({ message: 'Inserted Successfully', success: true })
   }
 
   public async update({ response, request, params }: HttpContextContract) {
@@ -44,6 +42,7 @@ export default class PostsController {
         })
         await data.merge({ image: image }).save()
       } else {
+        // console.log('upd:', payload)
         await data.merge({ caption: payload.caption }).save()
       }
       return response.send({ message: 'Updated Successfully', success: true })
@@ -54,7 +53,7 @@ export default class PostsController {
     const data = await Post.findOrFail(params.id)
     // console.log(payload.image)
     if (data) {
-        await data.delete()
+      await data.delete()
       return response.send({ message: 'Deleted Successfully', success: true })
     } else return response.send({ message: 'No record found', success: false })
   }
