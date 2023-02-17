@@ -24,12 +24,14 @@ import PostsController from 'App/Controllers/Http/PostsController'
 Route.get('/', async () => {
   return { hello: 'world' }
 })
-Route.post('/app', 'PostsController.upload').middleware('auth')
-Route.group(()=>{
+Route.group(() => {
+  Route.post('/', 'PostsController.upload')
   Route.get('/', 'PostsController.displayAll')
   Route.get('/:id', 'PostsController.displayOne')
   Route.put('/:id', 'PostsController.update')
   Route.delete('/:id', 'PostsController.destroy')
-}).prefix('/app')
+})
+  .prefix('/app')
+  .middleware('auth')
 Route.post('/register', 'UsersController.register')
 Route.post('/login', 'UsersController.login')
